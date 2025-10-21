@@ -6,9 +6,11 @@
     "dev": "vercel dev"
   },
   "dependencies": {
+    "@vercel/node": "^5.4.1",
     "grammy": "^1.38.3"
   },
   "devDependencies": {
+    "@types/node": "^24.9.1",
     "typescript": "^5.9.3"
   }
 }

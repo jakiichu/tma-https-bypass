@@ -6,6 +6,23 @@ if (!token) throw new Error('BOT_TOKEN not set');
 
 const bot = new Bot(token);
 
+let initPromise: Promise<void> | null = null;
+
+async function ensureBotInited() {
+    if ((bot as any).botInfo) return;
+
+    if (!initPromise) {
+        initPromise = (async () => {
+            try {
+                await bot.init();
+            } finally {
+                initPromise = null;
+            }
+        })();
+    }
+    return initPromise;
+}
+
 bot.on('message', async (ctx) => {
     const text = ctx.message?.text ?? '';
     if (!/^https?:\/\/.+/.test(text)) {
@@ -21,15 +38,11 @@ bot.on('message', async (ctx) => {
 });
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-     if (req.method === 'GET') {
-        return res.status(200).send('OK');
-    }
-    if (req.method !== 'POST') {
-        return res.status(405).send('Method Not Allowed');
-    }
-
+    if (req.method === 'GET') return res.status(200).send('OK');
+    if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
 
     try {
+        await ensureBotInited();
         await bot.handleUpdate(req.body);
         return res.status(200).send('OK');
     } catch (err) {
