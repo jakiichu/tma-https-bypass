@@ -10,8 +10,15 @@ if (!token) {
 
 const bot = new Bot(token);
 
-bot.command("start", (ctx) => ctx.reply("Welcome! Up and running."));
 
-bot.on("message", (ctx) => ctx.reply("Got another message!"));
+bot.on("message", async (ctx) => {
+    if(ctx.msg.text?.match(/^https?:\/\/.+/) === null){
+        await ctx.reply('Неверный формат регекса: ^https?:\\/\\/.+').catch(void 0)
+    }
+    else {
+        await ctx.reply('Переходите по URL', {reply_markup: {inline_keyboard: [[{web_app: {url: ctx.msg.text as string}, text: "URL"}]]}})
+    }
+
+});
 
 bot.start();
