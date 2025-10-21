@@ -6,20 +6,27 @@ if (!token) throw new Error('BOT_TOKEN not set');
 
 const bot = new Bot(token);
 
+let isInited = false;
 let initPromise: Promise<void> | null = null;
 
 async function ensureBotInited() {
-    if ((bot as any).botInfo) return;
+    if (isInited) return;
 
     if (!initPromise) {
         initPromise = (async () => {
             try {
                 await bot.init();
+                isInited = true;
+                console.log('Bot initialized');
+            } catch (err) {
+                console.error('bot.init failed', err);
+                throw err;
             } finally {
                 initPromise = null;
             }
         })();
     }
+
     return initPromise;
 }
 
