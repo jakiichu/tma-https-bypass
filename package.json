@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
   "build": "tsc",
-  "start": "node dist/bot.js",
+  "start": "node dist/webhook.js",
   "vercel:dev": "vercel dev"
 },
 "dependencies": {
